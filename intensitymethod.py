@@ -5,7 +5,7 @@ from spectra import autospec,crossspec, fractionalOctave
 import matplotlib.pyplot as plt
 
 # path to the files of interest
-side = 2
+side = 6
 path = sys.path[0]+"/IntensityFiles/Side"+str(side)
 print ("path to files: ",path)
 
@@ -15,7 +15,6 @@ dt = 1/fs
 T = 10.5
 N = int(fs*T)
 t = np.arange(0,T,dt)
-
 
 # one of the sides only has 79 recordings (id's)
 idnums = 81
@@ -42,7 +41,7 @@ pref = 2e-5
 iref = 1e-12
 
 # intensity calculation parameters
-ns = 2**15   # samples per block
+ns = 2**13   # samples per block
 rho = 1.2    # denisty of the air (find based on temp, pressure, RH)
 deltax = .0254  # spacing between microphones
 Area1 = 0.15*0.15   # area of one measurement (15 cm distance traveled)
@@ -50,8 +49,7 @@ Area2 = (1.2+0.15)**2  # total area of one side
 
 print("Areas match? ",Area2 - 81*Area1 < .0001) # Area2 should be 81*Area1
 
-
-fig1, ax1 = plt.subplots(figsize=(10,10)) 
+fig1, ax1 = plt.subplots() 
 Isum = 0
 Iavg_over_freq = np.zeros((idnums,1))
 # loop through all the IDs and sum up intensity as we go
@@ -70,31 +68,50 @@ ax1.set_ylabel("Intensity (dB re 1pW/m$^2$)")
 ax1.set_title("Intensity from each recording")
 
 Iavg = Isum / Area2 #surface sound intensity for one side (The areas should do nothing in this case because each measurement square is identical)
+# Power = Intensity * Area
+Power = Isum
 print("Iavg over the surface is ",Iavg)
-fig2, ax2 = plt.subplots(figsize=(10,10))
+fig2, ax2 = plt.subplots()
 ax2.semilogx(f,10*np.log10(np.abs(Iavg)/iref))
 ax2.set_xlabel("Frequency (Hz)")
 ax2.set_ylabel("Intensity (dB re 1pW/m$^2$)")
 ax2.set_title("Average Intensity for side "+str(side))
 
+filename = "PowerSide"+str(side)+".txt"
+print(len(Power))
+fout = open(filename,'w')
+for i in range(len(Power)):
+    fout.write(str(Power[i]))
+    fout.write(" \n ")
+fout.close()
+filename = "Frequency.txt"
+fout = open(filename,'w')
+for i in range(len(f)):
+    fout.write(str(f[i]))
+    fout.write(" \n ")
+fout.close()
+print('finished writing the file')
 
 
 ## make a plot showing OASPL vs IDnum
-fig3, ax3 = plt.subplots(figsize=(10,10))
-ax3.plot(Iavg_over_freq)
-ax3.set_title("average intensity versus id number")
+# fig3, ax3 = plt.subplots(figsize=(10,10))
+# ax3.plot(Iavg_over_freq)
+# ax3.set_title("average intensity versus id number")
 
-
-
+spec,fc = fractionalOctave(f,Power,flims=[100,10e3],width=3)
+print('spec',spec)
+Lw = 10*np.log10(np.abs(spec)/iref)
+plt.figure()
+plt.semilogx(fc,Lw)
+print('Lw',Lw)
 
 
 
 ## convert to a single value to be reported as the A-weighted sound power level
-__, ff = fractionalOctave(np.arange(2,4),np.arange(3,5),flims=[100,20e3],width=3)  # get the 1/3 octave band freq. out
-__, Gain = weighting(ff,type='A')  # only save the second output in this case
+__, Gain = weighting(fc,type='A')  # only save the second output in this case
 #Overall Sound power level
-#Lw_overall = 10*np.log10(np.sum(10**(.1*(Lw+Gain))))   # where C is the A-weighting constant  
-# print()
-# print("The A-weighted overall sound power level is: ",Lw_overall)
+Lw_overall = 10*np.log10(np.sum(10**(.1*(Lw+Gain))))   # where C is the A-weighting constant  
+print()
+print("The A-weighted overall sound power level is: ",Lw_overall)
 print()
 plt.show()

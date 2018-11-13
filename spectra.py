@@ -196,7 +196,7 @@ def fractionalOctave(f,Gxx,flims=[2e1,2e4],width=3):
     spec, octave band spectra (Eng Units**2)
     Authors: Kent Gee; translated to python by Jared Oliphant
     """
-
+ 
     # all of the possible freq. values
     fcsub = np.array([1,1.03,1.06,1.09,1.12,1.15,1.18,1.22,1.25,1.28,\
     1.32,1.36,1.4,1.45,1.5,1.55,1.6,1.65,1.7,1.75,1.8,1.85,1.9,1.95,2,2.06,\
@@ -255,8 +255,8 @@ def fractionalOctave(f,Gxx,flims=[2e1,2e4],width=3):
         Qr = fcexact[i]/(f2-f1)
         Qd = (np.pi/b)/(np.sin(np.pi/b))*Qr
         Hsq = np.abs(1/(1+Qd**b*((f/fcexact[i])-(fcexact[i]/f))**b))
-        spec.append(np.sum(Gxx*Hsq)*df)
 
+        spec.append(np.sum(Gxx*Hsq)*df)
 
     # convert to an array and return
     spec = np.array(spec)
