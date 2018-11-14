@@ -115,9 +115,17 @@ ax4.set_ylabel('Sound power level, $L_w$ (dB re 1pW)')
 ax4.grid(True)
 ax4.set_xticks(f.tolist(),minor=False)
 ax4.set_xticks([],minor=True)
-ax4.set_xticklabels(['','125','','','250','','','500','','','1000','','','2000','','','4000','','','8000',''])
+ax4.set_xticklabels(['200','250','315','400','500','630','800','1k','1.25k','1.6k','2k'])
 fig4.savefig("ReverbSoundPower.png", dpi=1200, bbox_inches='tight')
 
+print('Lw1',Lw1)
+print()
+print(Lw1[0])
+fout = open("reverbsoundpower.txt","w")
+for i in range(len(Lw1)):
+    str(Lw1[i])
+    fout.write(str(Lw1[i])+"\n")
+fout.close()
 # %% Standard deviation (dB sense) (calculate for each frequency band)
 # NM = 6; % number of microphones
 

@@ -29,26 +29,13 @@ for side in range(6):
     for i in range(4095):
         Power[i,side] = fin.readline()
     fin.close()
-    # plt.semilogx(Freq,10*np.log10(np.abs(Power[:,side])/iref))
-    # plt.semilogx(Freq,np.abs(Power[:,side]))
 print('finished reading the files')
 
 
 
 overallSoundPower = np.sum(Power,axis=1)
-print(overallSoundPower)
-# plt.semilogx(Freq,10*np.log10(np.abs(overallSoundPower)/iref))
-# plt.xlim((100,10e3))
-# plt.ylim((0,0.001))
+print('overallSoundPower',overallSoundPower)
 spec, fc = fractionalOctave(Freq,overallSoundPower,flims=[200,2e3],width=3)
-
-# plt.figure()
-# plt.semilogx(fc,10*np.log10(np.abs(spec)/iref))
-
-##
-##Don't forget the free-field correction!!!!!
-##
-# freefield_correction = np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0.7,0.7,1,1.1,1.6,2.5,3.4,4.8],dtype=float)
 
 Lw = 10*np.log10(np.abs(spec)/iref)
 ## convert to a single value to be reported as the A-weighted sound power level
@@ -56,37 +43,45 @@ __, Gain = weighting(fc,type='A')  # only save the second output in this case
 #Overall Sound power level
 Lw_overall = 10*np.log10(np.sum(10**(.1*(Lw+Gain))))   # where C is the A-weighting constant  
 print()
-print("The A-weighted overall sound power level is: ",Lw_overall)
-print()
+print("The A-weighted overall sound power level for intensity method is: ",Lw_overall)
+
 
 
 
 
 f = np.array([200,250,315,400,500,630,800,1000,1250,1600,2000],dtype=float)
 
+Reverb = np.zeros(len(f))
+filename = "reverbsoundpower.txt"
+fin = open(filename,'r')
+for i in range(len(f)):
+    Reverb[i] = fin.readline()
+fin.close()
+
+
+Lw_overall = 10*np.log10(np.sum(10**(.1*(Reverb+Gain))))   # where C is the A-weighting constant  
+print()
+print("The A-weighted overall sound power level for reverb method is: ",Lw_overall)
+print()
+
+
+
 fig4, ax4 = plt.subplots()
-markerline, stemlines, baseline = ax4.stem(fc,Lw,markerfmt='none')  #,'color',[.75 .6 0],'linewidth',8,'marker','none')
+markerline, stemlines, baseline = ax4.stem(fc-.025*fc,Lw,markerfmt='none',label="Intensity method", basefmt='none') 
+markerline1, stemlines1, baseline1 = ax4.stem(fc+.025*fc,Reverb,markerfmt='none',label="Reverb method", basefmt='none')
 ax4.set_xscale('log')
 ax4.set_xlim((175,2.4e3))
 ax4.set_ylim((40,120))
-plt.setp(stemlines, color=(.3,.3,.3), linewidth=7)
-ax4.set_xlabel('$1/3$ octave frequencies (Hz)')
+plt.setp(stemlines, color=(0,0,.5), linewidth=7)
+plt.setp(stemlines1, color=(0,.5,0), linewidth=7)
+ax4.set_xlabel('$1/3$ Octave Frequencies (Hz)')
 ax4.set_ylabel('Sound power level, $L_w$ (dB re 1pW)')
 ax4.grid(True)
 ax4.set_xticks(f.tolist(),minor=False)
 ax4.set_xticks([],minor=True)
-ax4.set_xticklabels(['','125','','','250','','','500','','','1000','','','2000','','','4000','','','8000',''])
-fig4.savefig("IntensitySoundPower.png", dpi=1200, bbox_inches='tight')
-
-
-
-
-
-"""
-fig5, ax5 = plt.subplots()
-ax5.semilogx(f,freefield_correction)
-ax5.set_ylim((-15,15))
-"""
+ax4.set_xticklabels(['200','250','315','400','500','630','800','1k','1.25k','1.6k','2k'])
+ax4.legend(loc="upper left")
+fig4.savefig("BothSoundPower.png", dpi=1200, bbox_inches='tight')
 
 
 plt.show()
