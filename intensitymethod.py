@@ -5,7 +5,7 @@ from spectra import autospec,crossspec, fractionalOctave
 import matplotlib.pyplot as plt
 
 # path to the files of interest
-side = 6
+side = 2
 path = sys.path[0]+"/IntensityFiles/Side"+str(side)
 print ("path to files: ",path)
 
@@ -42,7 +42,7 @@ iref = 1e-12
 
 # intensity calculation parameters
 ns = 2**13   # samples per block
-rho = 1.2    # denisty of the air (find based on temp, pressure, RH)
+rho = 0.8    # denisty of the air (find based on temp, pressure, RH)
 deltax = .0254  # spacing between microphones
 Area1 = 0.15*0.15   # area of one measurement (15 cm distance traveled)
 Area2 = (1.2+0.15)**2  # total area of one side
@@ -59,23 +59,42 @@ for i in range(idnums):
     f = f[1:]     # cut out zero Hz
     Gxy = Gxy[1:]
     Intensity = np.imag(Gxy) / 2.0 / np.pi / f / rho / deltax    # equation for intensity
+
+    # what do about the wind from the nozzle?
+    print(10*np.log10(np.abs(Intensity[16])/iref) > 70,i)
+    if 10*np.log10(np.abs(Intensity[16])/iref) > 70 and side == 2: # this was a wind id (70 dB is the cutoff)
+        print('wind ID',i)
+        Gxy,f = crossspec(x[:,i-3],y[:,i-3],fs,ns,N) # 3 IDs back
+        f = f[1:]     # cut out zero Hz
+        Gxy = Gxy[1:]
+        Intensity1 = np.imag(Gxy) / 2.0 / np.pi / f / rho / deltax    # equation for intensity
+        Gxy,f = crossspec(x[:,i+3],y[:,i+3],fs,ns,N) # 3 IDs ahead
+        f = f[1:]     # cut out zero Hz
+        Gxy = Gxy[1:]
+        Intensity2 = np.imag(Gxy) / 2.0 / np.pi / f / rho / deltax    # equation for intensity
+        Intensity = (Intensity1 + Intensity2) / 2.0 # average two intensity measurments before and after it 
+    
     Iavg_over_freq[i] = np.mean(np.log10(np.abs(Intensity)/iref))
     Isum += Intensity * Area1     # sum up over total area
     ax1.semilogx(f,10*np.log10(np.abs(Intensity)/iref))   # plot each id seperate
     
+    
 ax1.set_xlabel("Frequency (Hz)")
 ax1.set_ylabel("Intensity (dB re 1pW/m$^2$)")
 ax1.set_title("Intensity from each recording")
+ax1.set_xlim((100,10e3))
+print('f[16]',f[16])
 
 Iavg = Isum / Area2 #surface sound intensity for one side (The areas should do nothing in this case because each measurement square is identical)
 # Power = Intensity * Area
 Power = Isum
-print("Iavg over the surface is ",Iavg)
 fig2, ax2 = plt.subplots()
 ax2.semilogx(f,10*np.log10(np.abs(Iavg)/iref))
 ax2.set_xlabel("Frequency (Hz)")
 ax2.set_ylabel("Intensity (dB re 1pW/m$^2$)")
 ax2.set_title("Average Intensity for side "+str(side))
+
+
 
 filename = "PowerSide"+str(side)+".txt"
 print(len(Power))
@@ -106,7 +125,7 @@ plt.semilogx(fc,Lw)
 print('Lw',Lw)
 
 
-
+"""
 ## convert to a single value to be reported as the A-weighted sound power level
 __, Gain = weighting(fc,type='A')  # only save the second output in this case
 #Overall Sound power level
@@ -114,4 +133,5 @@ Lw_overall = 10*np.log10(np.sum(10**(.1*(Lw+Gain))))   # where C is the A-weight
 print()
 print("The A-weighted overall sound power level is: ",Lw_overall)
 print()
+"""
 plt.show()

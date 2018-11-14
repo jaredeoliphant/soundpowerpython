@@ -24,11 +24,11 @@ def autospec(x,fs,ns=2**15,N=-1,unitflag=0):
     Authors: Kent Gee, Alan Wall, and Brent Reichman
     translated to python by Jared Oliphant
     """
-    print("In 1 block we travel %.2f meters" %(ns/fs*343))
-    print("Frequency resolution is %.0f Hz" %(fs/ns))
+    # print("In 1 block we travel %.2f meters" %(ns/fs*343))
+    # print("Frequency resolution is %.0f Hz" %(fs/ns))
 
     # coerce inputs
-    ns = int(ns)
+    # ns = int(ns)
 
     # if N was not specified
     if N == -1:
@@ -118,14 +118,15 @@ def crossspec(x,y,fs,ns=2**15,N=-1,unitflag=0):
     Authors: Kent Gee and Alan Wall; 
     Translation to python by Jared Oliphant
     """
-    print("In 1 block we travel %.2f meters" %(ns/fs*343))
-    print("Frequency resolution is %.0f Hz" %(fs/ns))
+    # print("In 1 block we travel %.2f meters" %(ns/fs*343))
+    # print("Frequency resolution is %.0f Hz" %(fs/ns))
 
+    # ns = int(ns)
     if N == -1:
         N = 2**floor(np.log2(len(x)))
 
     # frequency array
-    f = (fs/ns)*np.arange(0,ns/2.)
+    f = (fs/ns)*np.arange(0,ns/2.0,dtype=float)
     df = f[1]
 
     # enforce zero mean

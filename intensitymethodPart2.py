@@ -33,23 +33,27 @@ for side in range(6):
         Power[i,side] = fin.readline()
     fin.close()
     plt.semilogx(Freq,10*np.log10(np.abs(Power[:,side])/iref))
+    # plt.semilogx(Freq,np.abs(Power[:,side]))
 print('finished reading the files')
 
 
 
-overallSoundPower = np.sum(np.abs(Power),axis=1)
+overallSoundPower = np.sum((Power),axis=1)
 print(overallSoundPower)
 plt.semilogx(Freq,10*np.log10(np.abs(overallSoundPower)/iref))
-
+plt.xlim((100,10e3))
+# plt.ylim((0,0.001))
 spec, fc = fractionalOctave(Freq,overallSoundPower,flims=[100,10e3],width=3)
 
-plt.figure()
-plt.semilogx(fc,10*np.log10(np.abs(spec)/iref))
+# plt.figure()
+# plt.semilogx(fc,10*np.log10(np.abs(spec)/iref))
 
-"""
+##
+##Don't forget the free-field correction!!!!!
+##
 
 
-
+Lw = 10*np.log10(np.abs(spec)/iref)
 ## convert to a single value to be reported as the A-weighted sound power level
 __, Gain = weighting(fc,type='A')  # only save the second output in this case
 #Overall Sound power level
@@ -57,5 +61,23 @@ Lw_overall = 10*np.log10(np.sum(10**(.1*(Lw+Gain))))   # where C is the A-weight
 print()
 print("The A-weighted overall sound power level is: ",Lw_overall)
 print()
-"""
+
+
+f = np.array([100,125,160,200,250,315,400,500,630,800,1000,1250,1600,2000,2500,3150,4000,5000,6300,8000,10000],dtype=float)
+fig4, ax4 = plt.subplots()
+markerline, stemlines, baseline = ax4.stem(fc,Lw,markerfmt='none')  #,'color',[.75 .6 0],'linewidth',8,'marker','none')
+ax4.set_xscale('log')
+ax4.set_xlim((75,14e3))
+ax4.set_ylim((40,120))
+plt.setp(stemlines, color=(.2,.2,.2), linewidth=7)
+ax4.set_xlabel('$1/3$ octave frequencies (Hz)')
+ax4.set_ylabel('Sound power level, $L_w$ (dB re 1pW)')
+ax4.grid(True)
+ax4.set_xticks(f.tolist(),minor=False)
+ax4.set_xticks([],minor=True)
+ax4.set_xticklabels(['','125','','','250','','','500','','','1000','','','2000','','','4000','','','8000',''])
+fig4.savefig("IntensitySoundPower.png", dpi=1200, bbox_inches='tight')
+
+
+
 plt.show()

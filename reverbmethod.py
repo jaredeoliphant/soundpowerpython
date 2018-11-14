@@ -41,11 +41,7 @@ for i in range(6):
     spec2[:,i], __ = fractionalOctave(f,Gxx2[:,i])
     # ax1.semilogx(fc,10*np.log10(spec1[:,i]/pref**2))
 
-"""
-ax1.set_xlabel("Frequecy 1/3 octave bands (Hz)")
-ax1.set_ylabel("SPL (dB re 20$\mu$Pa)")
-ax1.set_xlim((100,10e3))
-"""
+
 fc = fc[7:28]
 spec1 = spec1[7:28,:]
 spec2 = spec2[7:28,:]
