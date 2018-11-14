@@ -40,7 +40,7 @@ print(overallSoundPower)
 # plt.semilogx(Freq,10*np.log10(np.abs(overallSoundPower)/iref))
 # plt.xlim((100,10e3))
 # plt.ylim((0,0.001))
-spec, fc = fractionalOctave(Freq,overallSoundPower,flims=[100,10e3],width=3)
+spec, fc = fractionalOctave(Freq,overallSoundPower,flims=[200,2e3],width=3)
 
 # plt.figure()
 # plt.semilogx(fc,10*np.log10(np.abs(spec)/iref))
@@ -48,9 +48,9 @@ spec, fc = fractionalOctave(Freq,overallSoundPower,flims=[100,10e3],width=3)
 ##
 ##Don't forget the free-field correction!!!!!
 ##
-freefield_correction = np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0.7,0.7,1,1.1,1.6,2.5,3.4,4.8],dtype=float)
+# freefield_correction = np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0.7,0.7,1,1.1,1.6,2.5,3.4,4.8],dtype=float)
 
-Lw = 10*np.log10(np.abs(spec)/iref)+7*freefield_correction
+Lw = 10*np.log10(np.abs(spec)/iref)
 ## convert to a single value to be reported as the A-weighted sound power level
 __, Gain = weighting(fc,type='A')  # only save the second output in this case
 #Overall Sound power level
@@ -62,12 +62,12 @@ print()
 
 
 
-f = np.array([100,125,160,200,250,315,400,500,630,800,1000,1250,1600,2000,2500,3150,4000,5000,6300,8000,10000],dtype=float)
+f = np.array([200,250,315,400,500,630,800,1000,1250,1600,2000],dtype=float)
 
 fig4, ax4 = plt.subplots()
 markerline, stemlines, baseline = ax4.stem(fc,Lw,markerfmt='none')  #,'color',[.75 .6 0],'linewidth',8,'marker','none')
 ax4.set_xscale('log')
-ax4.set_xlim((75,14e3))
+ax4.set_xlim((175,2.4e3))
 ax4.set_ylim((40,120))
 plt.setp(stemlines, color=(.3,.3,.3), linewidth=7)
 ax4.set_xlabel('$1/3$ octave frequencies (Hz)')

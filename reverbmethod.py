@@ -31,20 +31,20 @@ unitflag = 0
 
 Gxx1 = np.zeros((int(ns/2),6))
 Gxx2 = Gxx1
-spec1 = np.zeros((31,6))
+spec1 = np.zeros((11,6))
 spec2 = spec1
 # fig1, ax1 = plt.subplots()
 for i in range(6):
     Gxx1[:,i], f, __ = autospec(x1[:,i], fs, ns, N, unitflag)
     Gxx2[:,i], __, __ = autospec(x2[:,i], fs, ns, N, unitflag)
-    spec1[:,i], fc = fractionalOctave(f,Gxx1[:,i])
-    spec2[:,i], __ = fractionalOctave(f,Gxx2[:,i])
+    spec1[:,i], fc = fractionalOctave(f,Gxx1[:,i],flims=[200,2e3],width=3)
+    spec2[:,i], __ = fractionalOctave(f,Gxx2[:,i],flims=[200,2e3],width=3)
     # ax1.semilogx(fc,10*np.log10(spec1[:,i]/pref**2))
 
 
-fc = fc[7:28]
-spec1 = spec1[7:28,:]
-spec2 = spec2[7:28,:]
+# fc = fc[7:28]
+# spec1 = spec1[7:28,:]
+# spec2 = spec2[7:28,:]
 
 Lp_bar1 = np.zeros((len(spec1),1))
 Lp_bar2 = Lp_bar1
@@ -64,6 +64,9 @@ f = np.array([100,125,160,200,250,315,400,500,630,800,1000,1250,1600,2000,2500,3
 T60 = np.array([8.9975,8.663333333,7.614166667,7.469166667,7.964166667,8.323333333,8.4825,8.195,7.944166667, \
 7.798333333,7.245,6.283333333,5.4575,4.64,3.7775,3.179166667,2.564166667,1.899166667,1.375833333,1.079166667,0.6941666667],dtype=float)
 
+f = f[3:14]
+T60 = T60[3:14]
+print('f',f)
 # fig3, ax3 = plt.subplots()
 # ax3.semilogx(f,T60)
 
@@ -104,7 +107,7 @@ fig4, ax4 = plt.subplots()
 markerline, stemlines, baseline = ax4.stem(fc,Lw1,markerfmt='none')  #,'color',[.75 .6 0],'linewidth',8,'marker','none')
 # ax4.semilogx(fc,Lw2-20)  #,'color',[0 0 .75],'linewidth',8,'marker','none')
 ax4.set_xscale('log')
-ax4.set_xlim((75,14e3))
+ax4.set_xlim((175,2.4e3))
 ax4.set_ylim((40,120))
 plt.setp(stemlines, color=(.3,.3,.3), linewidth=7)
 ax4.set_xlabel('$1/3$ octave frequencies (Hz)')
@@ -130,7 +133,7 @@ fig4.savefig("ReverbSoundPower.png", dpi=1200, bbox_inches='tight')
 
 
 ## convert to a single value to be reported as the A-weighted sound power level
-__, ff = fractionalOctave(np.arange(2,4),np.arange(3,5),flims=[100,10e3],width=3)  # get the 1/3 octave band freq. out
+__, ff = fractionalOctave(np.arange(2,4),np.arange(3,5),flims=[200,2e3],width=3)  # get the 1/3 octave band freq. out
 __, Gain = weighting(ff,type='A')  # only save the second output in this case
 #Overall Sound power level
 Lw_overall = 10*np.log10(np.sum(10**(.1*(Lw1+Gain))))   # where C is the A-weighting constant  
