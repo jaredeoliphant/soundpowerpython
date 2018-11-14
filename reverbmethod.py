@@ -106,7 +106,7 @@ markerline, stemlines, baseline = ax4.stem(fc,Lw1,markerfmt='none')  #,'color',[
 ax4.set_xscale('log')
 ax4.set_xlim((75,14e3))
 ax4.set_ylim((40,120))
-plt.setp(stemlines, color=(.1,.1,.1), linewidth=7)
+plt.setp(stemlines, color=(.3,.3,.3), linewidth=7)
 ax4.set_xlabel('$1/3$ octave frequencies (Hz)')
 ax4.set_ylabel('Sound power level, $L_w$ (dB re 1pW)')
 ax4.grid(True)
