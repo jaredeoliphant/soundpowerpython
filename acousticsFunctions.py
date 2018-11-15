@@ -11,7 +11,7 @@ def binfileload(path, IDname, IDnum, CHnum, N=10, NStart=0):
     NStart does not currently have any functionality currently either
     translated to python by Jared Oliphant
     """
-    
+    print('hello')
     # format the IDnum and CHnum strings
     IDnum = "%03.0f" %IDnum
     CHnum = "%03.0f" %CHnum
@@ -24,14 +24,18 @@ def binfileload(path, IDname, IDnum, CHnum, N=10, NStart=0):
 
     # coerce to an integer
     N = int(N)
-
+    print('opening ',filename)
     # use struct.unpack method to get read the data string
     with open(filename,'rb') as fin:
         num_data_bytes = 4*N
         data_str = fin.read(num_data_bytes)
-        fmt = str(N)+'f'
+        fmt = '<'+str(N)+'f'
+        # little-endian (@ and = give the same result)
         data = struct.unpack(fmt,data_str)  #N 4-byte floats
     
+    #f = open(filename,'rb')
+    #data1 = np.fromfile(f,dtype=float,count=N,sep="")
+    #print(data1)
     # return as an array
     return np.array(data)
 

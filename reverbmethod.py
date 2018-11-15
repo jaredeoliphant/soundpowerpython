@@ -13,32 +13,32 @@ dt = 1/fs
 T = 60.5
 t = np.arange(0,T,dt)
 N = int(fs*T)
-x1 = np.zeros((N,6))
-x2 = x1
-
+x = np.empty((N,6))
+# x2 = x1
+x1 = x 
 for i in range(6):
-    x1[:,i] = binfileload(path,'ID',1,i,N)
-    x2[:,i] = binfileload(path,'ID',2,i,N)
+    x[:,i] = binfileload(path,'ID',1,i,N)
+    # x2[:,i] = binfileload(path,'ID',2,i,N)
 
 
 pref = 2e-5
-ns = 2**15
+ns = 2**14
 unitflag = 0
 # prop_distance = ns/fs*343
 # print("In 1 block we travel %.2f meters" %prop_distance)
-# print("Frequency resolution is %.0f Hz" %(fs/ns))
+print("Frequency resolution is %.0f Hz" %(fs/ns))
 
 
 Gxx1 = np.zeros((int(ns/2),6))
-Gxx2 = Gxx1
+# Gxx2 = Gxx1
 spec1 = np.zeros((11,6))
-spec2 = spec1
+# spec2 = spec1
 # fig1, ax1 = plt.subplots()
 for i in range(6):
-    Gxx1[:,i], f, __ = autospec(x1[:,i], fs, ns, N, unitflag)
-    Gxx2[:,i], __, __ = autospec(x2[:,i], fs, ns, N, unitflag)
+    Gxx1[:,i], f, __ = autospec(x[:,i], fs, ns, N, unitflag)
+    # Gxx2[:,i], __, __ = autospec(x2[:,i], fs, ns, N, unitflag)
     spec1[:,i], fc = fractionalOctave(f,Gxx1[:,i],flims=[200,2e3],width=3)
-    spec2[:,i], __ = fractionalOctave(f,Gxx2[:,i],flims=[200,2e3],width=3)
+    # spec2[:,i], __ = fractionalOctave(f,Gxx2[:,i],flims=[200,2e3],width=3)
     # ax1.semilogx(fc,10*np.log10(spec1[:,i]/pref**2))
 
 
@@ -47,10 +47,10 @@ for i in range(6):
 # spec2 = spec2[7:28,:]
 
 Lp_bar1 = np.zeros((len(spec1),1))
-Lp_bar2 = Lp_bar1
+# Lp_bar2 = Lp_bar1
 for i in range(len(spec1)):
     Lp_bar1[i] = 10*np.log10(np.sum(spec1[i,:]/pref**2)/6)
-    Lp_bar2[i] = 10*np.log10(np.sum(spec2[i,:]/pref**2)/6)
+    # Lp_bar2[i] = 10*np.log10(np.sum(spec2[i,:]/pref**2)/6)
 """
 fig2, ax2 = plt.subplots()
 ax2.semilogx(fc,Lp_bar1)
@@ -72,7 +72,7 @@ print('f',f)
 
 
 # Metetoriological
-T = 30.0   # Temperature in Celsius
+temp = 30.0   # Temperature in Celsius
 B = 101340.0  # Barometric Pressure in Pa
 B0 = 1.013e5  # reference Pressure Pa
 
@@ -100,8 +100,8 @@ dmin = min(C1*sqrt(V./T60)) % minimum distance b/t source and microphone (m)
 """
 ########Final Equation!
 # sound power level of the source as a function of frequency
-Lw1 = Lp_bar1.transpose()[0] + 10*np.log(A/A0) + 4.34*A/S + 10*np.log10(1+S*c/8/V/f) - 25*np.log10(427*np.sqrt(273.0/(273+T))*B/B0/400.0) - 6
-Lw2 = Lp_bar2.transpose()[0] + 10*np.log(A/A0) + 4.34*A/S + 10*np.log10(1+S*c/8/V/f) - 25*np.log10(427*np.sqrt(273.0/(273+T))*B/B0/400.0) - 6
+Lw1 = Lp_bar1.transpose()[0] + 10*np.log10(A/A0) + 4.34*A/S + 10*np.log10(1+S*c/8/V/f) - 25*np.log10(427*np.sqrt(273.0/(273+temp))*B/B0/400.0) - 6
+# Lw2 = Lp_bar2.transpose()[0] + 10*np.log10(A/A0) + 4.34*A/S + 10*np.log10(1+S*c/8/V/f) - 25*np.log10(427*np.sqrt(273.0/(273+temp))*B/B0/400.0) - 6
 
 fig4, ax4 = plt.subplots()
 markerline, stemlines, baseline = ax4.stem(fc,Lw1,markerfmt='none')  #,'color',[.75 .6 0],'linewidth',8,'marker','none')
