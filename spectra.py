@@ -59,7 +59,7 @@ def autospec(x,fs,ns=2**15,N=-1,unitflag=0):
 
     # multiply with the windowing function
     blocks = np.multiply(np.tile(ww,[numBlocks,1]),x[blockMat])
-
+    print(blocks)
     # fft across every row
     X = np.fft.fft(blocks)
     

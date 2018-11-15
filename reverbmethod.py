@@ -13,11 +13,14 @@ dt = 1/fs
 T = 60.5
 t = np.arange(0,T,dt)
 N = int(fs*T)
-x = np.empty((N,6))
-# x2 = x1
-x1 = x 
+# x = np.empty((N,6))
+# # x2 = x1
+# x1 = x 
+x = []
 for i in range(6):
-    x[:,i] = binfileload(path,'ID',1,i,N)
+    # x[:,i] = binfileload(path,'ID',1,i,N)
+    temp = binfileload(path,'ID',1,i,N)
+    x.append(temp)
     # x2[:,i] = binfileload(path,'ID',2,i,N)
 
 
@@ -29,15 +32,19 @@ unitflag = 0
 print("Frequency resolution is %.0f Hz" %(fs/ns))
 
 
-Gxx1 = np.zeros((int(ns/2),6))
+# Gxx1 = np.zeros((int(ns/2),6))
+Gxx = []
 # Gxx2 = Gxx1
-spec1 = np.zeros((11,6))
+# spec1 = np.zeros((11,6))
+spec = []
 # spec2 = spec1
 # fig1, ax1 = plt.subplots()
 for i in range(6):
-    Gxx1[:,i], f, __ = autospec(x[:,i], fs, ns, N, unitflag)
+    temp, f, __ = autospec(x[i], fs, ns, N, unitflag)
+    Gxx.append(temp)
     # Gxx2[:,i], __, __ = autospec(x2[:,i], fs, ns, N, unitflag)
-    spec1[:,i], fc = fractionalOctave(f,Gxx1[:,i],flims=[200,2e3],width=3)
+    temp, fc = fractionalOctave(f,Gxx[i],flims=[200,2e3],width=3)
+    spec.append(temp)
     # spec2[:,i], __ = fractionalOctave(f,Gxx2[:,i],flims=[200,2e3],width=3)
     # ax1.semilogx(fc,10*np.log10(spec1[:,i]/pref**2))
 
@@ -46,11 +53,16 @@ for i in range(6):
 # spec1 = spec1[7:28,:]
 # spec2 = spec2[7:28,:]
 
-Lp_bar1 = np.zeros((len(spec1),1))
+# Lp_bar1 = np.zeros((len(spec1),1))
+Lp_bar = []
 # Lp_bar2 = Lp_bar1
-for i in range(len(spec1)):
-    Lp_bar1[i] = 10*np.log10(np.sum(spec1[i,:]/pref**2)/6)
+for i in range(len(spec[0])):
+    atfreq = np.array([spec[0][i],spec[1][i],spec[2][i],spec[3][i],spec[4][i],spec[5][i]])
+    temp = 10*np.log10(np.sum(atfreq/pref**2)/6)
+    print('temp',temp)
+    Lp_bar.append(temp)
     # Lp_bar2[i] = 10*np.log10(np.sum(spec2[i,:]/pref**2)/6)
+Lp_bar = np.array(Lp_bar)
 """
 fig2, ax2 = plt.subplots()
 ax2.semilogx(fc,Lp_bar1)
@@ -100,7 +112,7 @@ dmin = min(C1*sqrt(V./T60)) % minimum distance b/t source and microphone (m)
 """
 ########Final Equation!
 # sound power level of the source as a function of frequency
-Lw1 = Lp_bar1.transpose()[0] + 10*np.log10(A/A0) + 4.34*A/S + 10*np.log10(1+S*c/8/V/f) - 25*np.log10(427*np.sqrt(273.0/(273+temp))*B/B0/400.0) - 6
+Lw1 = Lp_bar + 10*np.log10(A/A0) + 4.34*A/S + 10*np.log10(1+S*c/8/V/f) - 25*np.log10(427*np.sqrt(273.0/(273+temp))*B/B0/400.0) - 6
 # Lw2 = Lp_bar2.transpose()[0] + 10*np.log10(A/A0) + 4.34*A/S + 10*np.log10(1+S*c/8/V/f) - 25*np.log10(427*np.sqrt(273.0/(273+temp))*B/B0/400.0) - 6
 
 fig4, ax4 = plt.subplots()

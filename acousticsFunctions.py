@@ -11,7 +11,7 @@ def binfileload(path, IDname, IDnum, CHnum, N=10, NStart=0):
     NStart does not currently have any functionality currently either
     translated to python by Jared Oliphant
     """
-    print('hello')
+    
     # format the IDnum and CHnum strings
     IDnum = "%03.0f" %IDnum
     CHnum = "%03.0f" %CHnum
