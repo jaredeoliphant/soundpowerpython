@@ -84,12 +84,12 @@ print('f',f)
 
 
 # Metetoriological
-temp = 30.0   # Temperature in Celsius
-B = 101340.0  # Barometric Pressure in Pa
+temp = 21.4   # Temperature in Celsius
+B = 86894.733  # Barometric Pressure in Pa
 B0 = 1.013e5  # reference Pressure Pa
 
 # speed of sound at temperature T
-c = 20.05*np.sqrt(273+T)  # m/s
+c = 20.05*np.sqrt(273+temp)  # m/s
 
 # Room properties
 V = 4.96 * 5.89 * 6.98 #  volume of the room (m^3)

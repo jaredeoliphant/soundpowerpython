@@ -42,7 +42,7 @@ for side in range(1,7):
 
     # intensity calculation parameters
     ns = 2**13   # samples per block
-    rho = 0.8    # denisty of the air (find based on temp, pressure, RH)
+    rho = 1.198    # denisty of the air (find based on temp, pressure, RH)
     deltax = .0254  # spacing between microphones
     Area1 = 0.15*0.15   # area of one measurement (15 cm distance traveled)
     Area2 = (1.2+0.15)**2  # total area of one side
